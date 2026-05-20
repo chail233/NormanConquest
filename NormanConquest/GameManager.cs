@@ -6,33 +6,31 @@ namespace NormanConquest
 {
     public class GameManager
     {
-        // === 玩家 ===
+        // 玩家 
         public Player Player1 { get; private set; }
         public Player Player2 { get; private set; }
         public Player CurrentPlayer { get; private set; }
         public Player OpponentPlayer { get; private set; }
 
-        // === 回合相关 ===
+        // 回合相关
         public int TurnNumber { get; private set; }
         public bool IsFirstTurn { get; private set; }
 
-        // === 当前正在进行的战斗连锁（同时只能有一个） ===
+        // 当前正在进行的战斗连锁（同时只能有一个）
         public BattleContext ActiveBattle { get; private set; }
 
-        // === UI 回调接口 ===
+        // UI 回调接口
         public IGameUI UI { get; set; }
 
-        // === 初始 HP ===
-        private readonly int initialHP;
+        // 初始 HP
+        private int initialHP;
 
         public GameManager(int hp = 10)
         {
             initialHP = hp;
         }
 
-        /// <summary>
-        /// 初始化并开始游戏
-        /// </summary>
+        // 初始化并开始游戏
         public void StartGame()
         {
             Player1 = new Player("玩家1", initialHP);
@@ -45,7 +43,7 @@ namespace NormanConquest
                 Player2.DrawCard();
             }
 
-            // 处理牌堆为空的情况（理论上初始40张够抽）
+            // 处理牌堆为空的情况
             CheckDeckEmpty(Player1);
             CheckDeckEmpty(Player2);
 
@@ -56,13 +54,11 @@ namespace NormanConquest
 
             // 先手第一回合不抽牌，直接进入行动阶段
             CurrentPlayer.RemainingNormalAttacks = GetMaxNormalAttacks(CurrentPlayer);
-            UI?.RefreshAll();
+            UI?.RefreshAll();// 刷新界面显示初始状态, ?表示如果UI不为null才调用
             UI?.PromptPlayerAction(CurrentPlayer);
         }
 
-        /// <summary>
-        /// 结束当前玩家的回合
-        /// </summary>
+        // 结束当前玩家的回合
         public void EndTurn()
         {
             // 切换玩家
@@ -79,17 +75,17 @@ namespace NormanConquest
 
         private void BeginTurn()
         {
-            // 1. 处理延迟效果（假装撤退等）
+            // 1. 处理延迟效果
             ProcessPendingEffects(CurrentPlayer);
 
-            // 2. 回合开始抽牌（先手第一回合跳过）
+            // 2. 回合开始抽牌
             if (!IsFirstTurn)
             {
                 CurrentPlayer.DrawCard();
                 CheckDeckEmpty(CurrentPlayer);
             }
 
-            // 3. 触发建筑回合开始效果（庄园等）
+            // 3. 触发建筑回合开始效果
             TriggerBuildingTurnStart(CurrentPlayer);
 
             // 4. 检查手牌上限，溢出则强制弃牌
@@ -98,18 +94,16 @@ namespace NormanConquest
             // 5. 重置通常进攻次数
             CurrentPlayer.RemainingNormalAttacks = GetMaxNormalAttacks(CurrentPlayer);
 
-            // 6. 检查HP（建筑区上限可能随HP变化而缩小）
+            // 6. 检查HP
             CheckBuildingOverflow(CurrentPlayer);
 
             UI?.RefreshAll();
             UI?.PromptPlayerAction(CurrentPlayer);
         }
 
-        // ==================== 进攻入口 ====================
+        // 进攻入口 
 
-        /// <summary>
-        /// 玩家尝试发起通常进攻
-        /// </summary>
+        // 玩家尝试发起通常进攻
         public bool TryNormalAttack(UnitCard unitCard)
         {
             if (ActiveBattle != null) return false;
@@ -121,9 +115,7 @@ namespace NormanConquest
             return true;
         }
 
-        /// <summary>
-        /// 特殊进攻入口（追击 / 倾巢出动调用）
-        /// </summary>
+        // 特殊进攻入口
         public void StartSpecialAttack(Player attacker, Player defender, UnitCard unitCard, bool disablePursuit = false)
         {
             // 特殊进攻不消耗 RemainingNormalAttacks
@@ -143,7 +135,7 @@ namespace NormanConquest
             UI?.PromptDefense(ActiveBattle);
         }
 
-        // ==================== 战斗回调 ====================
+        // 战斗回调
 
         private void OnBattleStateChanged(BattleContext context)
         {
@@ -180,7 +172,7 @@ namespace NormanConquest
             UI?.PromptPlayerAction(CurrentPlayer);
         }
 
-        // ==================== 建筑效果 ====================
+        // 建筑效果
 
         private int GetMaxNormalAttacks(Player player)
         {
@@ -231,7 +223,7 @@ namespace NormanConquest
             }
         }
 
-        // ==================== 牌堆管理 ====================
+        //牌堆管理
 
         private void CheckDeckEmpty(Player player)
         {
@@ -242,7 +234,7 @@ namespace NormanConquest
             player.ReshuffleDiscardIntoDeck();
         }
 
-        // ==================== 手牌上限 ====================
+        // 手牌上限
 
         public void CheckHandOverflow(Player player)
         {
@@ -259,31 +251,28 @@ namespace NormanConquest
             int limit = player.HandLimit;
             while (true)
             {
+                // 计算有效手牌数量：如果有兵营，部队牌不计入上限
                 int effectiveCount = hasBarracks
                     ? player.Hand.Count(c => c.CardType != CardType.Unit)
                     : player.Hand.Count;
 
                 if (effectiveCount <= limit) break;
 
-                // 需要弃牌，通知UI让玩家选择弃哪张
-                // 如果当前是对方回合（比如对方用绝罚导致我方抽牌溢出），这里需要处理
+                // 需要弃牌
                 // 简化：自动弃最后一张非部队牌（或第一张牌）
-                Card toDiscard = hasBarracks
-                    ? player.Hand.FirstOrDefault(c => c.CardType != CardType.Unit)
-                    : player.Hand.FirstOrDefault();
-                if (toDiscard == null) toDiscard = player.Hand[0]; // 全是部队牌时的兜底
+                Card toDiscard = player.Hand[player.Hand.Count - 1];
                 player.DiscardFromHand(toDiscard);
             }
         }
 
-        // ==================== 建筑区上限 ====================
+        //建筑区上限
 
         public void CheckBuildingOverflow(Player player)
         {
             int limit = player.BuildingLimit;
             while (player.BuildingZone.Count > limit)
             {
-                // 需要弃建筑，通知UI选择
+                // 需要弃建筑
                 // 简化：弃最后一个
                 BuildingCard toRemove = player.BuildingZone[player.BuildingZone.Count - 1];
                 player.BuildingZone.Remove(toRemove);
@@ -291,7 +280,7 @@ namespace NormanConquest
             }
         }
 
-        // ==================== 指令牌处理 ====================
+        //指令牌处理
 
         public void PlayOrderCard(OrderCard card)
         {
@@ -328,7 +317,7 @@ namespace NormanConquest
             UI?.RefreshAll();
             UI?.PromptPlayerAction(CurrentPlayer);
         }
-
+        // 征召：抽2张部队牌
         private void ExecuteLevy(Player player)
         {
             // 抽2张部队牌：从牌堆依次翻牌直到找到2张部队牌
@@ -354,7 +343,7 @@ namespace NormanConquest
                 player.Deck.Insert(0, nonUnitCards[i]);
             }
         }
-
+        // 土地开发：抽2张牌
         private void ExecuteLandDevelopment(Player player)
         {
             player.DrawCard();
@@ -362,12 +351,12 @@ namespace NormanConquest
             player.DrawCard();
             CheckDeckEmpty(player);
         }
-
+        // 税收：HP回复2点
         private void ExecuteTaxation(Player player)
         {
             player.HP += 2;
         }
-
+        // 分封：HP扣1，抽3张牌
         private void ExecuteEnfeoffment(Player player)
         {
             player.HP -= 1;
@@ -378,7 +367,7 @@ namespace NormanConquest
             player.DrawCard();
             CheckDeckEmpty(player);
         }
-
+        // 倾巢出动：打出手牌中所有部队牌，每张视为特殊进攻，禁止追击
         private void ExecuteAllOutAttack(Player attacker, Player defender)
         {
             // 收集手牌中所有部队牌
@@ -400,7 +389,7 @@ namespace NormanConquest
                 StartSpecialAttack(attacker, defender, unit, disablePursuit: true);
             }
         }
-
+        // 假装撤退：弃一张部队牌，下一次抽牌阶段额外抽2张牌
         private void ExecuteFakeRetreat(Player player)
         {
             // 需要玩家选择弃哪张部队牌，这里简化：弃手牌中第一张部队牌
@@ -419,10 +408,10 @@ namespace NormanConquest
                 player.PendingEffects.Add("FakeRetreat");
             }
         }
-
+        //绝罚：目标玩家弃一张手牌
         private void ExecuteAnathema(Player caster, Player target)
         {
-            // 需要UI交互选择，简化：随机弃一张手牌
+            //随机弃一张手牌
             if (target.Hand.Count > 0)
             {
                 Random rng = new Random();
@@ -430,13 +419,13 @@ namespace NormanConquest
                 Card card = target.Hand[index];
                 target.DiscardFromHand(index);
             }
-            // 建筑区选择暂不处理
         }
-
+        // 处理回合开始时的延迟效果
         private void ProcessPendingEffects(Player player)
         {
             foreach (var effect in player.PendingEffects)
             {
+                // 假装撤退的效果：抽2张牌
                 if (effect == "FakeRetreat")
                 {
                     player.DrawCard();
@@ -448,7 +437,7 @@ namespace NormanConquest
             player.PendingEffects.Clear();
         }
 
-        // ==================== 建筑牌处理 ====================
+        //建筑牌处理
 
         public void PlayBuildingCard(BuildingCard card)
         {
@@ -475,7 +464,7 @@ namespace NormanConquest
             UI?.PromptPlayerAction(CurrentPlayer);
         }
 
-        // ==================== 胜负判定 ====================
+        //胜负判定
 
         private bool CheckGameOver()
         {
