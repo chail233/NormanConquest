@@ -31,13 +31,24 @@ namespace NormanConquest
         // 从牌堆顶部抽一张牌加入手牌。牌堆为空时返回 null（由 GameManager 处理扣血和洗牌）
         public Card DrawCard()
         {
-            if (Deck.Count == 0) return null;
+            if (Deck.Count == 0)
+            {
+                throw new Exception("牌堆为空！");
+            }
             Card card = Deck[0];
             Deck.RemoveAt(0);
             Hand.Add(card);
             return card;
         }
-
+        //弃掉牌堆顶部的一张牌（由 GameManager 处理扣血和洗牌）
+        public Card DiscardTopCard()
+        {
+            if (Deck.Count == 0) return null;
+            Card card = Deck[0];
+            Deck.RemoveAt(0);
+            DiscardPile.Add(card);
+            return card;
+        }
         // 将一张手牌弃入弃牌堆
         public void DiscardFromHand(Card card)
         {

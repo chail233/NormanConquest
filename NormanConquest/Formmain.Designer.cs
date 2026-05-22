@@ -29,6 +29,28 @@
         private void InitializeComponent()
         {
             boxLog = new TextBox();
+            tableLayoutMain = new TableLayoutPanel();
+            panelOpponentInfo = new Panel();
+            labelOpponentHP = new Label();
+            labelOpponentPileCount = new Label();
+            labelOpponentName = new Label();
+            panelPlayerInfo = new Panel();
+            buttonPassDefense = new Button();
+            buttonEndTurn = new Button();
+            labelPileCount = new Label();
+            labelPlayerHP = new Label();
+            labelPlayerName = new Label();
+            panelGameInfo = new Panel();
+            textBoxLog = new TextBox();
+            labelGameInfo = new Label();
+            flowOpponentHand = new FlowLayoutPanel();
+            flowOpponentBuilding = new FlowLayoutPanel();
+            flowPlayerHand = new FlowLayoutPanel();
+            flowPlayerBuilding = new FlowLayoutPanel();
+            tableLayoutMain.SuspendLayout();
+            panelOpponentInfo.SuspendLayout();
+            panelPlayerInfo.SuspendLayout();
+            panelGameInfo.SuspendLayout();
             SuspendLayout();
             // 
             // boxLog
@@ -40,23 +62,249 @@
             boxLog.Size = new Size(381, 235);
             boxLog.TabIndex = 1;
             // 
+            // tableLayoutMain
+            // 
+            tableLayoutMain.AutoScroll = true;
+            tableLayoutMain.ColumnCount = 1;
+            tableLayoutMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutMain.Controls.Add(panelOpponentInfo, 0, 0);
+            tableLayoutMain.Controls.Add(panelPlayerInfo, 0, 6);
+            tableLayoutMain.Controls.Add(panelGameInfo, 0, 3);
+            tableLayoutMain.Controls.Add(flowOpponentHand, 0, 1);
+            tableLayoutMain.Controls.Add(flowOpponentBuilding, 0, 2);
+            tableLayoutMain.Controls.Add(flowPlayerHand, 0, 5);
+            tableLayoutMain.Controls.Add(flowPlayerBuilding, 0, 4);
+            tableLayoutMain.Dock = DockStyle.Fill;
+            tableLayoutMain.Location = new Point(0, 0);
+            tableLayoutMain.Name = "tableLayoutMain";
+            tableLayoutMain.RowCount = 7;
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 9.090909F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 9.090909F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 9.090909F));
+            tableLayoutMain.Size = new Size(1395, 892);
+            tableLayoutMain.TabIndex = 0;
+            // 
+            // panelOpponentInfo
+            // 
+            panelOpponentInfo.BackColor = Color.DarkGray;
+            panelOpponentInfo.Controls.Add(labelOpponentHP);
+            panelOpponentInfo.Controls.Add(labelOpponentPileCount);
+            panelOpponentInfo.Controls.Add(labelOpponentName);
+            panelOpponentInfo.Dock = DockStyle.Fill;
+            panelOpponentInfo.Location = new Point(3, 3);
+            panelOpponentInfo.Name = "panelOpponentInfo";
+            panelOpponentInfo.Size = new Size(1389, 75);
+            panelOpponentInfo.TabIndex = 0;
+            // 
+            // labelOpponentHP
+            // 
+            labelOpponentHP.AutoSize = true;
+            labelOpponentHP.Location = new Point(136, 19);
+            labelOpponentHP.Name = "labelOpponentHP";
+            labelOpponentHP.Size = new Size(35, 24);
+            labelOpponentHP.TabIndex = 0;
+            labelOpponentHP.Text = "HP";
+            // 
+            // labelOpponentPileCount
+            // 
+            labelOpponentPileCount.AutoSize = true;
+            labelOpponentPileCount.Location = new Point(202, 19);
+            labelOpponentPileCount.Name = "labelOpponentPileCount";
+            labelOpponentPileCount.Size = new Size(64, 24);
+            labelOpponentPileCount.TabIndex = 0;
+            labelOpponentPileCount.Text = "牌堆：";
+            // 
+            // labelOpponentName
+            // 
+            labelOpponentName.AutoSize = true;
+            labelOpponentName.Location = new Point(37, 19);
+            labelOpponentName.Name = "labelOpponentName";
+            labelOpponentName.Size = new Size(82, 24);
+            labelOpponentName.TabIndex = 0;
+            labelOpponentName.Text = "对手名字";
+            // 
+            // panelPlayerInfo
+            // 
+            panelPlayerInfo.BackColor = Color.DarkGray;
+            panelPlayerInfo.Controls.Add(buttonPassDefense);
+            panelPlayerInfo.Controls.Add(buttonEndTurn);
+            panelPlayerInfo.Controls.Add(labelPileCount);
+            panelPlayerInfo.Controls.Add(labelPlayerHP);
+            panelPlayerInfo.Controls.Add(labelPlayerName);
+            panelPlayerInfo.Dock = DockStyle.Fill;
+            panelPlayerInfo.Location = new Point(3, 813);
+            panelPlayerInfo.Name = "panelPlayerInfo";
+            panelPlayerInfo.Size = new Size(1389, 76);
+            panelPlayerInfo.TabIndex = 1;
+            // 
+            // buttonPassDefense
+            // 
+            buttonPassDefense.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonPassDefense.Location = new Point(1091, 0);
+            buttonPassDefense.Name = "buttonPassDefense";
+            buttonPassDefense.Size = new Size(145, 76);
+            buttonPassDefense.TabIndex = 2;
+            buttonPassDefense.Text = "放弃抵御";
+            buttonPassDefense.UseVisualStyleBackColor = true;
+            buttonPassDefense.Visible = false;
+            // 
+            // buttonEndTurn
+            // 
+            buttonEndTurn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonEndTurn.Location = new Point(1239, 0);
+            buttonEndTurn.Name = "buttonEndTurn";
+            buttonEndTurn.Size = new Size(147, 76);
+            buttonEndTurn.TabIndex = 1;
+            buttonEndTurn.Text = "结束回合";
+            buttonEndTurn.UseVisualStyleBackColor = true;
+            buttonEndTurn.Click += buttonEndTurn_Click;
+            // 
+            // labelPileCount
+            // 
+            labelPileCount.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            labelPileCount.AutoSize = true;
+            labelPileCount.Location = new Point(202, 29);
+            labelPileCount.Name = "labelPileCount";
+            labelPileCount.Size = new Size(64, 24);
+            labelPileCount.TabIndex = 0;
+            labelPileCount.Text = "牌堆：";
+            // 
+            // labelPlayerHP
+            // 
+            labelPlayerHP.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            labelPlayerHP.AutoSize = true;
+            labelPlayerHP.Location = new Point(136, 29);
+            labelPlayerHP.Name = "labelPlayerHP";
+            labelPlayerHP.Size = new Size(39, 24);
+            labelPlayerHP.TabIndex = 0;
+            labelPlayerHP.Text = "HP:";
+            // 
+            // labelPlayerName
+            // 
+            labelPlayerName.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            labelPlayerName.AutoSize = true;
+            labelPlayerName.Location = new Point(37, 29);
+            labelPlayerName.Name = "labelPlayerName";
+            labelPlayerName.Size = new Size(82, 24);
+            labelPlayerName.TabIndex = 0;
+            labelPlayerName.Text = "玩家名字";
+            // 
+            // panelGameInfo
+            // 
+            panelGameInfo.BackColor = Color.LightGray;
+            panelGameInfo.Controls.Add(textBoxLog);
+            panelGameInfo.Controls.Add(labelGameInfo);
+            panelGameInfo.Dock = DockStyle.Fill;
+            panelGameInfo.Location = new Point(3, 408);
+            panelGameInfo.Name = "panelGameInfo";
+            panelGameInfo.Size = new Size(1389, 75);
+            panelGameInfo.TabIndex = 2;
+            // 
+            // textBoxLog
+            // 
+            textBoxLog.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            textBoxLog.Font = new Font("Microsoft YaHei UI", 7.5F, FontStyle.Regular, GraphicsUnit.Point, 134);
+            textBoxLog.Location = new Point(995, 3);
+            textBoxLog.Multiline = true;
+            textBoxLog.Name = "textBoxLog";
+            textBoxLog.ScrollBars = ScrollBars.Vertical;
+            textBoxLog.Size = new Size(385, 69);
+            textBoxLog.TabIndex = 1;
+            // 
+            // labelGameInfo
+            // 
+            labelGameInfo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            labelGameInfo.AutoSize = true;
+            labelGameInfo.Font = new Font("华文新魏", 17.9999981F, FontStyle.Regular, GraphicsUnit.Point, 134);
+            labelGameInfo.Location = new Point(9, 20);
+            labelGameInfo.Name = "labelGameInfo";
+            labelGameInfo.Size = new Size(87, 36);
+            labelGameInfo.TabIndex = 0;
+            labelGameInfo.Text = "信息";
+            // 
+            // flowOpponentHand
+            // 
+            flowOpponentHand.AutoScroll = true;
+            flowOpponentHand.Dock = DockStyle.Fill;
+            flowOpponentHand.Location = new Point(3, 84);
+            flowOpponentHand.Name = "flowOpponentHand";
+            flowOpponentHand.Size = new Size(1389, 156);
+            flowOpponentHand.TabIndex = 3;
+            // 
+            // flowOpponentBuilding
+            // 
+            flowOpponentBuilding.AutoScroll = true;
+            flowOpponentBuilding.Dock = DockStyle.Fill;
+            flowOpponentBuilding.Location = new Point(3, 246);
+            flowOpponentBuilding.Name = "flowOpponentBuilding";
+            flowOpponentBuilding.Size = new Size(1389, 156);
+            flowOpponentBuilding.TabIndex = 4;
+            // 
+            // flowPlayerHand
+            // 
+            flowPlayerHand.AutoScroll = true;
+            flowPlayerHand.Dock = DockStyle.Fill;
+            flowPlayerHand.Location = new Point(3, 651);
+            flowPlayerHand.Name = "flowPlayerHand";
+            flowPlayerHand.Size = new Size(1389, 156);
+            flowPlayerHand.TabIndex = 5;
+            // 
+            // flowPlayerBuilding
+            // 
+            flowPlayerBuilding.AutoScroll = true;
+            flowPlayerBuilding.Dock = DockStyle.Fill;
+            flowPlayerBuilding.Location = new Point(3, 489);
+            flowPlayerBuilding.Name = "flowPlayerBuilding";
+            flowPlayerBuilding.Size = new Size(1389, 156);
+            flowPlayerBuilding.TabIndex = 6;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlDarkDark;
-            ClientSize = new Size(1175, 824);
+            ClientSize = new Size(1395, 892);
+            Controls.Add(tableLayoutMain);
             Cursor = Cursors.Hand;
             DoubleBuffered = true;
             Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "NormanConquest";
             Load += FormMain_Load;
+            tableLayoutMain.ResumeLayout(false);
+            panelOpponentInfo.ResumeLayout(false);
+            panelOpponentInfo.PerformLayout();
+            panelPlayerInfo.ResumeLayout(false);
+            panelPlayerInfo.PerformLayout();
+            panelGameInfo.ResumeLayout(false);
+            panelGameInfo.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
         private TextBox boxLog;
+        private TableLayoutPanel tableLayoutMain;
+        private Panel panelOpponentInfo;
+        private Panel panelPlayerInfo;
+        private Panel panelGameInfo;
+        private Label labelPlayerName;
+        private FlowLayoutPanel flowOpponentHand;
+        private FlowLayoutPanel flowOpponentBuilding;
+        private FlowLayoutPanel flowPlayerHand;
+        private FlowLayoutPanel flowPlayerBuilding;
+        private Label labelOpponentHP;
+        private Label labelOpponentPileCount;
+        private Label labelOpponentName;
+        private Label labelPileCount;
+        private Label labelPlayerHP;
+        private Label labelGameInfo;
+        private Button buttonEndTurn;
+        private Button buttonPassDefense;
+        private TextBox textBoxLog;
     }
 }

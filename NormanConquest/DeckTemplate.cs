@@ -42,7 +42,7 @@ namespace NormanConquest
             prototypes.Add(new BuildingCard("庄园", "Manor", "每回合开始额外抽1张牌"));
             prototypes.Add(new BuildingCard("城墙", "CityWall", "被进攻时可弃掉此牌，抵御此次进攻"));
             prototypes.Add(new BuildingCard("城堡", "Castle", "每回合可多进行一次通常进攻"));
-            prototypes.Add(new BuildingCard("马厩", "Stable", "己方骑兵进攻成功时，将该骑兵返回手牌"));
+            prototypes.Add(new BuildingCard("马厩", "Stable", "己方骑兵进攻成功时，该骑兵不会进入弃牌堆"));
             prototypes.Add(new BuildingCard("兵营", "Barracks", "部队牌不计入手牌上限"));
             prototypes.Add(new BuildingCard("教堂", "Church", "待设计"));
             prototypes.Add(new BuildingCard("市场", "Market", "待设计"));
