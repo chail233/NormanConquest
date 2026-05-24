@@ -58,7 +58,7 @@ namespace NormanConquest
         {
             log($"{currentPlayer.Name}的回合开始。");
             // 回合开始时抽一张牌
-            if(!isFirstTurn) DrawCard(currentPlayer);
+            if (!isFirstTurn) DrawCard(currentPlayer);
             if (haveBuilding(currentPlayer, "庄园"))
             {
                 log($"{currentPlayer.Name}拥有庄园。所以额外抽一张牌");
@@ -67,7 +67,7 @@ namespace NormanConquest
             //处理回合开始时的待处理效果
             ProcessPendingEffects(currentPlayer);
             currentPlayer.RemainingNormalAttacks = 1;
-            if(haveBuilding(currentPlayer, "城堡"))
+            if (haveBuilding(currentPlayer, "城堡"))
             {
                 log($"由于{currentPlayer.Name}拥有城堡，通常攻击次数加一");
                 currentPlayer.RemainingNormalAttacks += 1;
@@ -79,7 +79,7 @@ namespace NormanConquest
         {
             foreach (var card in player.BuildingZone)
             {
-                if(card.Name == name) return true;
+                if (card.Name == name) return true;
             }
             return false;
         }
@@ -111,7 +111,7 @@ namespace NormanConquest
             }
             else
             {
-                if(player.Hand.Count >= player.HandLimit)
+                if (player.Hand.Count >= player.HandLimit)
                 {
                     Card discardedCard = player.DiscardTopCard();
                     log($"{player.Name}的手牌已满，抽牌时丢弃了 {discardedCard.Name}。");
@@ -148,7 +148,7 @@ namespace NormanConquest
         //进攻
         public void TryAttack(Player Attacker, Player Defender, UnitCard AttackUnit, int attackerUnitIndex)
         {
-            if(Attacker.RemainingNormalAttacks <= 0)
+            if (Attacker.RemainingNormalAttacks <= 0)
             {
                 log($"{Attacker.Name}没有剩余的通常攻击次数了，无法发动攻击。");
                 return;
@@ -173,7 +173,7 @@ namespace NormanConquest
         {
             currentAttack.DefenderUnit = DefenseUnit;
             currentAttack.Execute();
-            if(haveBuilding(currentAttack.Attacker, "马厩") && 
+            if (haveBuilding(currentAttack.Attacker, "马厩") &&
                 (currentAttack.AttackUnit.UnitType == UnitType.LightCavalry || currentAttack.AttackUnit.UnitType == UnitType.HeavyCavalry))
             {
                 UI.Logout("由于攻击单位是骑兵且攻击方拥有马厩，攻击方不丢牌");
@@ -211,12 +211,22 @@ namespace NormanConquest
             UI.Logout("攻击成功，造成了伤害！");
             TakeDamage(currentAttack.Defender, 1);
         }
-    }
+        public void TakeOrder(Player player, OrderCard order)
+        {
+            log($"{player.Name}使用了指令牌：{order.Name}。");
+            //根据命令效果进行处理
+        }
+        public void TakeBuilding(Player player, BuildingCard building)
+        {
+            log($"{player.Name}建造了建筑：{building.Name}。");
+            //根据建筑效果进行处理
+        }
 
-    public interface IGameUI
-    {
-        void Refresh();
-        void Logout(string message);
-        void PromptDefense(Attack attack);
+        public interface IGameUI
+        {
+            void Refresh();
+            void Logout(string message);
+            void PromptDefense(Attack attack);
+        }
     }
 }

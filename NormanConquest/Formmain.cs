@@ -1,6 +1,6 @@
 namespace NormanConquest
 {
-    public partial class FormMain : Form, IGameUI
+    public partial class FormMain : Form, GameManager.IGameUI
     {
         private GameManager gameManager;
         private int CardWidth = 90;
@@ -80,12 +80,37 @@ namespace NormanConquest
         {
             flowPlayerHand.Controls.Clear();
             int spacing = CardSpace;
-            foreach (var card in gameManager.player.Hand)
+            for (int i = 0; i < gameManager.player.Hand.Count; i++)
             {
+                Card card = gameManager.player.Hand[i];
                 Panel cardPanel = CreateCardPanel(card, CardWidth, CardHeight);
                 cardPanel.Margin = new Padding(spacing, 0, 0, 0);
                 flowPlayerHand.Controls.Add(cardPanel);
+                if (card.CardType == CardType.Unit)
+                {
+                    cardPanel.Click += (sender, e) => UnitCard_Click(sender, e, (UnitCard)card, i);
+                }
+                else if (card.CardType == CardType.Order)
+                {
+                    cardPanel.Click += (sender, e) => OrderCard_Click(sender, e, (OrderCard)card);
+                }
+                else if (card.CardType == CardType.Building)
+                {
+                    cardPanel.Click += (sender, e) => BuildingCard_Click(sender, e, (BuildingCard)card);
+                }
             }
+        }
+        public void UnitCard_Click(object sender, EventArgs e, UnitCard unitCard, int cardIndex)
+        {
+            gameManager.TryAttack(gameManager.player, gameManager.opponent, unitCard, cardIndex);
+        }
+        public void OrderCard_Click(object sender, EventArgs e, OrderCard orderCard)
+        {
+            gameManager.TakeOrder(gameManager.player, orderCard);
+        }
+        public void BuildingCard_Click(object sender, EventArgs e, BuildingCard buildingCard)
+        {
+            gameManager.TakeBuilding(gameManager.player, buildingCard);
         }
         //刷新对手建筑
         private void RefreshOpponentBuildings()
@@ -213,6 +238,7 @@ namespace NormanConquest
         public void PromptDefense(Attack attack)
         {
             // 这里可以弹出一个对话框让玩家选择如何防守
+            Logout($"{attack.Defender}需要防守");
         }
 
         private void buttonEndTurn_Click(object sender, EventArgs e)
