@@ -35,6 +35,7 @@
             labelOpponentPileCount = new Label();
             labelOpponentName = new Label();
             panelPlayerInfo = new Panel();
+            buttonRefresh = new Button();
             buttonPassDefense = new Button();
             buttonEndTurn = new Button();
             labelPileCount = new Label();
@@ -130,6 +131,7 @@
             // panelPlayerInfo
             // 
             panelPlayerInfo.BackColor = Color.DarkGray;
+            panelPlayerInfo.Controls.Add(buttonRefresh);
             panelPlayerInfo.Controls.Add(buttonPassDefense);
             panelPlayerInfo.Controls.Add(buttonEndTurn);
             panelPlayerInfo.Controls.Add(labelPileCount);
@@ -141,6 +143,17 @@
             panelPlayerInfo.Size = new Size(1389, 76);
             panelPlayerInfo.TabIndex = 1;
             // 
+            // buttonRefresh
+            // 
+            buttonRefresh.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonRefresh.Location = new Point(940, 0);
+            buttonRefresh.Name = "buttonRefresh";
+            buttonRefresh.Size = new Size(145, 76);
+            buttonRefresh.TabIndex = 2;
+            buttonRefresh.Text = "刷新";
+            buttonRefresh.UseVisualStyleBackColor = true;
+            buttonRefresh.Click += buttonRefresh_Click;
+            // 
             // buttonPassDefense
             // 
             buttonPassDefense.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
@@ -151,6 +164,7 @@
             buttonPassDefense.Text = "放弃抵御";
             buttonPassDefense.UseVisualStyleBackColor = true;
             buttonPassDefense.Visible = false;
+            buttonPassDefense.Click += buttonPassDefense_Click;
             // 
             // buttonEndTurn
             // 
@@ -306,5 +320,6 @@
         private Button buttonEndTurn;
         private Button buttonPassDefense;
         private TextBox textBoxLog;
+        private Button buttonRefresh;
     }
 }

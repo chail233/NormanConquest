@@ -6,6 +6,7 @@ namespace NormanConquest
         private int CardWidth = 90;
         private int CardHeight = 140;
         private int CardSpace = 10;
+        private bool needDefense = false;
         public FormMain()
         {
             InitializeComponent();
@@ -84,32 +85,68 @@ namespace NormanConquest
             {
                 Card card = gameManager.player.Hand[i];
                 Panel cardPanel = CreateCardPanel(card, CardWidth, CardHeight);
+                //用tag标记索引
+                cardPanel.Tag = i;
                 cardPanel.Margin = new Padding(spacing, 0, 0, 0);
                 flowPlayerHand.Controls.Add(cardPanel);
                 if (card.CardType == CardType.Unit)
                 {
-                    cardPanel.Click += (sender, e) => UnitCard_Click(sender, e, (UnitCard)card, i);
+                    cardPanel.Click += (sender, e) => UnitCard_Click(sender, e);
                 }
                 else if (card.CardType == CardType.Order)
                 {
-                    cardPanel.Click += (sender, e) => OrderCard_Click(sender, e, i);
+                    cardPanel.Click += (sender, e) => OrderCard_Click(sender, e);
                 }
                 else if (card.CardType == CardType.Building)
                 {
-                    cardPanel.Click += (sender, e) => BuildingCard_Click(sender, e, i);
+                    cardPanel.Click += (sender, e) => BuildingCard_Click(sender, e);
                 }
             }
         }
-        public void UnitCard_Click(object sender, EventArgs e, UnitCard unitCard, int cardIndex)
+        public void UnitCard_Click(object sender, EventArgs e)
         {
-            gameManager.TryAttack(gameManager.player, gameManager.opponent, unitCard, cardIndex);
+            if (needDefense)
+            {
+                Panel cardPanel = sender as Panel;
+                int cardIndex = (int)cardPanel.Tag;
+                UnitCard unitCard = (UnitCard)gameManager.player.Hand[cardIndex];
+                gameManager.currentAttack.DefenderUnit = unitCard;
+                needDefense = false;
+                buttonPassDefense.Visible = false;
+                gameManager.TakeAttack(cardIndex);
+            }
+            else if (gameManager.currentPlayer != gameManager.player)
+            {
+                Logout("当前不是你的回合，无法行动");
+            }
+            else
+            {
+                Panel cardPanel = sender as Panel;
+                int cardIndex = (int)cardPanel.Tag;
+                UnitCard unitCard = (UnitCard)gameManager.player.Hand[cardIndex];
+                gameManager.TryAttack(gameManager.player, gameManager.opponent, unitCard, cardIndex);
+            }
         }
-        public void OrderCard_Click(object sender, EventArgs e, int cardIndex)
+        public void OrderCard_Click(object sender, EventArgs e)
         {
-            gameManager.TakeOrder(gameManager.player, cardIndex);
+            if(needDefense)
+            {
+                Logout("正在等待防守，无法使用指令牌");
+                return;
+            }
+            Panel cardPanel = sender as Panel;
+            int orderIndex = (int)cardPanel.Tag;
+            gameManager.TakeOrder(gameManager.player, orderIndex);
         }
-        public void BuildingCard_Click(object sender, EventArgs e, int cardIndex)
+        public void BuildingCard_Click(object sender, EventArgs e)
         {
+            if(needDefense)
+            {
+                Logout("正在等待防守，无法使用建筑牌");
+                return;
+            }
+            Panel cardPanel = sender as Panel;
+            int cardIndex = (int)cardPanel.Tag;
             gameManager.TakeBuilding(gameManager.player, cardIndex);
         }
         //刷新对手建筑
@@ -237,8 +274,9 @@ namespace NormanConquest
         }
         public void PromptDefense(Attack attack)
         {
-            // 这里可以弹出一个对话框让玩家选择如何防守
-            Logout($"{attack.Defender}需要防守");
+            needDefense = true;
+            buttonPassDefense.Visible = true;
+            Logout($"{attack.Defender.Name}需要防守");
         }
 
         private void buttonEndTurn_Click(object sender, EventArgs e)
@@ -248,12 +286,29 @@ namespace NormanConquest
                 Logout("正在处理上一个操作，当前无法结束回合，请稍等...");
                 return;
             }
+            if (gameManager.currentAttack != null && !gameManager.currentAttack.finish)
+            {
+                Logout($"正在处理进攻，无法结束回合。");
+                return;
+            }
             gameManager.EndTurn();
             buttonEndTurn.Enabled = false;
         }
         public void EnableEndTurnButton()
         {
             buttonEndTurn.Enabled = true;
+        }
+
+        private void buttonRefresh_Click(object sender, EventArgs e)
+        {
+            Refresh();
+        }
+
+        private void buttonPassDefense_Click(object sender, EventArgs e)
+        {
+            gameManager.TakeAttackWithoutDefense();
+            buttonPassDefense.Visible = false;
+            needDefense = false;
         }
     }
 }

@@ -222,24 +222,30 @@ namespace NormanConquest
             processing = true;
             Attacker.RemainingNormalAttacks -= 1;
             currentAttack = new Attack(Attacker, Defender, AttackUnit, null, this, attackerUnitIndex, -1);
-            UI.PromptDefense(currentAttack);
+            if(currentAttack.Defender == player) UI.PromptDefense(currentAttack);
+            else AIDefense(currentAttack);
         }
         public void TrySpecialAttack(Player Attacker, Player Defender, UnitCard AttackUnit, int attackerUnitIndex)
         {
             UI.Logout($"{Attacker.Name}尝试用{AttackUnit.Name}进行特殊攻击{Defender.Name}。");
             processing = true;
             currentAttack = new Attack(Attacker, Defender, AttackUnit, null, this, attackerUnitIndex, -1);
-            UI.PromptDefense(currentAttack);
+            if (currentAttack.Defender == player) UI.PromptDefense(currentAttack);
+            else AIDefense(currentAttack);
         }
         public void PursuitAttack()
         {
-            UI.Logout($"{currentAttack.Defender.Name}发动了追击！");
+            UI.Logout($"{currentAttack.Attacker.Name}发动了追击！");
             processing = true;
-            UI.PromptDefense(currentAttack);
+            if (currentAttack.Defender == player) UI.PromptDefense(currentAttack);
+            else AIDefense(currentAttack);
         }
-        public void TakeAttack(UnitCard DefenseUnit)
+        public void TakeAttack(int DefenseUnitIndex)
         {
+            UnitCard DefenseUnit = (UnitCard)currentAttack.Defender.Hand[DefenseUnitIndex];
             currentAttack.DefenderUnit = DefenseUnit;
+            currentAttack.DefenderUnitIndex = DefenseUnitIndex;
+            log($"{currentAttack.Defender.Name}使用{DefenseUnit.Name}防御");
             currentAttack.Execute();
             if (haveBuilding(currentAttack.Attacker, "马厩") &&
                 (currentAttack.AttackUnit.UnitType == UnitType.LightCavalry || currentAttack.AttackUnit.UnitType == UnitType.HeavyCavalry))
@@ -267,6 +273,8 @@ namespace NormanConquest
         }
         public void TakeAttackWithoutDefense()
         {
+            log($"{currentAttack.Defender.Name}选择不防御");
+            currentAttack.finish = true;
             if (haveBuilding(currentAttack.Attacker, "马厩") &&
                 (currentAttack.AttackUnit.UnitType == UnitType.LightCavalry || currentAttack.AttackUnit.UnitType == UnitType.HeavyCavalry))
             {
@@ -282,13 +290,26 @@ namespace NormanConquest
             TakeDamage(currentAttack.Defender, 1);
             processing = false;
         }
+        private void AIDefense(Attack attack)
+        {
+            int CardIdx = AI.DecideDefense(attack);
+            if (CardIdx == -1)
+            {
+
+                TakeAttackWithoutDefense();
+            }
+            else
+            {
+                TakeAttack(CardIdx);
+            }
+        }
         public void TakeOrder(Player player, int CardIdx)
         {
             OrderCard order = (OrderCard)player.Hand[CardIdx];
             player.DiscardFromHand(CardIdx);
             log($"{player.Name}使用了指令牌：{order.Name}。");
             //根据命令效果进行处理
-
+            UI.Refresh();
         }
         public void TakeBuilding(Player player, int CardIdx)
         {

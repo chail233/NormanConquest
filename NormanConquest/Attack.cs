@@ -17,6 +17,7 @@ namespace NormanConquest
         public Attack PursuitAttack { get; set; }
         public int AttackerUnitIndex { get; set; }
         public int DefenderUnitIndex { get; set; }
+        public bool finish {  get; set; } = false;
         public Attack(Player attacker, Player defender, UnitCard attackUnit, UnitCard defenderUnit, GameManager gameManager, int attackerUnitIndex, int defenderUnitIndex   )
         {
             Attacker = attacker;
@@ -47,6 +48,7 @@ namespace NormanConquest
                     CreatePursuit();
                 }
             }
+            finish = true;
         }
         public void CreatePursuit()
         {
