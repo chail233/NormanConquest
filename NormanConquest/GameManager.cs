@@ -12,9 +12,11 @@ namespace NormanConquest
         public IGameUI UI { get; set; }
         public Player player { get; set; }
         public Player opponent { get; set; }
+        public AIPlayer AI { get; set; } = new AIPlayer();
         public Player currentPlayer { get; set; }
         public bool isFirstTurn { get; set; }
         private int initialHP = 5;
+        public bool processing = false;//当前是否正在处理某个效果，防止同时处理多个效果导致状态混乱
         public Attack currentAttack { get; set; }
         public GameManager()
         {
@@ -52,11 +54,13 @@ namespace NormanConquest
             isFirstTurn = false;
             UI.Refresh();
             StartTurn();
+            UI.Refresh();
         }
         //回合开始
         public void StartTurn()
         {
             log($"{currentPlayer.Name}的回合开始。");
+            processing = true;
             // 回合开始时抽一张牌
             if (!isFirstTurn) DrawCard(currentPlayer);
             if (haveBuilding(currentPlayer, "庄园"))
@@ -72,7 +76,53 @@ namespace NormanConquest
                 log($"由于{currentPlayer.Name}拥有城堡，通常攻击次数加一");
                 currentPlayer.RemainingNormalAttacks += 1;
             }
+            processing = false;
             UI.Refresh();
+            if(currentPlayer == opponent)
+            {
+                AIAction();
+            }
+            else
+            {
+                UI.EnableEndTurnButton();
+            }
+            UI.Refresh();
+        }
+        //AI行动
+        private async void AIAction()
+        {
+            log($"AI的行动回合");
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+            timer.Interval = 800;
+            AI.waiter = new TaskCompletionSource<bool>();
+            timer.Tick += (s, e) =>
+            {
+                int ActIdx = AI.TakeAction(this);
+                if (processing) return;
+                if (ActIdx == -1)
+                {
+                    AI.waiter.SetResult(true);
+                    timer.Stop();
+                    return;
+                }
+                Card ActCard = opponent.Hand[ActIdx];
+                if (ActCard.CardType == CardType.Unit)
+                {
+                    TryAttack(opponent, player, (UnitCard)ActCard, ActIdx);
+                }
+                else if (ActCard.CardType == CardType.Order)
+                {
+                    TakeOrder(opponent, ActIdx);
+                }
+                else if (ActCard.CardType == CardType.Building)
+                {
+                    TakeBuilding(opponent, ActIdx);
+                }
+                UI.Refresh();
+            };
+            timer.Start();
+            await AI.waiter.Task;
+            EndTurn();
         }
         //是否有某个建筑
         private bool haveBuilding(Player player, string name)
@@ -86,6 +136,7 @@ namespace NormanConquest
         //处理回合开始效果
         private void ProcessPendingEffects(Player player)
         {
+            processing = true;
             if (player.PendingEffects.Count > 0)
             {
                 log($"{player.Name}有以下待处理效果：");
@@ -97,10 +148,13 @@ namespace NormanConquest
                 // 处理完毕后清空待处理效果列表
                 player.PendingEffects.Clear();
             }
+            processing = false;
+            UI.Refresh();
         }
         //抽牌
         private void DrawCard(Player player)
         {
+            processing = true;
             if (player.Deck.Count == 0)
             {
                 //牌堆空了，扣血洗牌
@@ -122,16 +176,22 @@ namespace NormanConquest
                     log($"{player.Name}抽到了 {drawnCard.Name}。");
                 }
             }
+            UI.Refresh();
+            processing = false;
         }
         //重置牌堆
         private void ResetDeck(Player player)
         {
+            processing = true;
             player.ReshuffleDiscardIntoDeck();
             log($"{player.Name}的牌堆已重置。");
+            processing = false;
+            UI.Refresh();
         }
         //扣血
         private void TakeDamage(Player player, int damage)
         {
+            processing = true;
             player.HP -= damage;
             log($"{player.Name}受到 {damage} 点伤害，剩余 HP：{player.HP}。");
             if (player.HP <= 0)
@@ -139,11 +199,16 @@ namespace NormanConquest
                 log($"{player.Name}被击败了！");
                 // 游戏结束处理
             }
+            processing = false;
+            UI.Refresh();
         }
         //处理效果
         private void Effect(Player player, string effectName)
         {
+            processing = true;
             //实现
+            processing = false;
+            UI.Refresh();
         }
         //进攻
         public void TryAttack(Player Attacker, Player Defender, UnitCard AttackUnit, int attackerUnitIndex)
@@ -154,6 +219,7 @@ namespace NormanConquest
                 return;
             }
             UI.Logout($"{Attacker.Name}尝试用{AttackUnit.Name}攻击{Defender.Name}。");
+            processing = true;
             Attacker.RemainingNormalAttacks -= 1;
             currentAttack = new Attack(Attacker, Defender, AttackUnit, null, this, attackerUnitIndex, -1);
             UI.PromptDefense(currentAttack);
@@ -161,12 +227,14 @@ namespace NormanConquest
         public void TrySpecialAttack(Player Attacker, Player Defender, UnitCard AttackUnit, int attackerUnitIndex)
         {
             UI.Logout($"{Attacker.Name}尝试用{AttackUnit.Name}进行特殊攻击{Defender.Name}。");
+            processing = true;
             currentAttack = new Attack(Attacker, Defender, AttackUnit, null, this, attackerUnitIndex, -1);
             UI.PromptDefense(currentAttack);
         }
         public void PursuitAttack()
         {
             UI.Logout($"{currentAttack.Defender.Name}发动了追击！");
+            processing = true;
             UI.PromptDefense(currentAttack);
         }
         public void TakeAttack(UnitCard DefenseUnit)
@@ -194,6 +262,8 @@ namespace NormanConquest
                 currentAttack = currentAttack.PursuitAttack;
                 PursuitAttack();
             }
+            processing = false;
+            UI.Refresh();
         }
         public void TakeAttackWithoutDefense()
         {
@@ -210,16 +280,23 @@ namespace NormanConquest
             }
             UI.Logout("攻击成功，造成了伤害！");
             TakeDamage(currentAttack.Defender, 1);
+            processing = false;
         }
-        public void TakeOrder(Player player, OrderCard order)
+        public void TakeOrder(Player player, int CardIdx)
         {
+            OrderCard order = (OrderCard)player.Hand[CardIdx];
+            player.DiscardFromHand(CardIdx);
             log($"{player.Name}使用了指令牌：{order.Name}。");
             //根据命令效果进行处理
+
         }
-        public void TakeBuilding(Player player, BuildingCard building)
+        public void TakeBuilding(Player player, int CardIdx)
         {
+            BuildingCard building = (BuildingCard)player.Hand[CardIdx];
+            player.DiscardFromHand(CardIdx);
             log($"{player.Name}建造了建筑：{building.Name}。");
             //根据建筑效果进行处理
+            UI.Refresh();
         }
 
         public interface IGameUI
@@ -227,6 +304,7 @@ namespace NormanConquest
             void Refresh();
             void Logout(string message);
             void PromptDefense(Attack attack);
+            void EnableEndTurnButton();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace NormanConquest
         {
             InitializeComponent();
             gameManager = new GameManager();
-            gameManager.UI = this; // 将界面实例传递给游戏管理器，以便游戏管理器可以调用界面刷新方法
+            gameManager.UI = this; // 将界面实例传递给游戏管理器
             Logout("窗口实例初始化");
         }
 
@@ -92,11 +92,11 @@ namespace NormanConquest
                 }
                 else if (card.CardType == CardType.Order)
                 {
-                    cardPanel.Click += (sender, e) => OrderCard_Click(sender, e, (OrderCard)card);
+                    cardPanel.Click += (sender, e) => OrderCard_Click(sender, e, i);
                 }
                 else if (card.CardType == CardType.Building)
                 {
-                    cardPanel.Click += (sender, e) => BuildingCard_Click(sender, e, (BuildingCard)card);
+                    cardPanel.Click += (sender, e) => BuildingCard_Click(sender, e, i);
                 }
             }
         }
@@ -104,13 +104,13 @@ namespace NormanConquest
         {
             gameManager.TryAttack(gameManager.player, gameManager.opponent, unitCard, cardIndex);
         }
-        public void OrderCard_Click(object sender, EventArgs e, OrderCard orderCard)
+        public void OrderCard_Click(object sender, EventArgs e, int cardIndex)
         {
-            gameManager.TakeOrder(gameManager.player, orderCard);
+            gameManager.TakeOrder(gameManager.player, cardIndex);
         }
-        public void BuildingCard_Click(object sender, EventArgs e, BuildingCard buildingCard)
+        public void BuildingCard_Click(object sender, EventArgs e, int cardIndex)
         {
-            gameManager.TakeBuilding(gameManager.player, buildingCard);
+            gameManager.TakeBuilding(gameManager.player, cardIndex);
         }
         //刷新对手建筑
         private void RefreshOpponentBuildings()
@@ -243,7 +243,17 @@ namespace NormanConquest
 
         private void buttonEndTurn_Click(object sender, EventArgs e)
         {
+            if (gameManager.processing)
+            {
+                Logout("正在处理上一个操作，当前无法结束回合，请稍等...");
+                return;
+            }
             gameManager.EndTurn();
+            buttonEndTurn.Enabled = false;
+        }
+        public void EnableEndTurnButton()
+        {
+            buttonEndTurn.Enabled = true;
         }
     }
 }
