@@ -31,12 +31,12 @@ namespace NormanConquest
             prototypes.Add(new OrderCard("征召", "Levy", "抽2张部队牌"));
             prototypes.Add(new OrderCard("土地开发", "LandDevelopment", "抽2张牌"));
             prototypes.Add(new OrderCard("土地开发", "LandDevelopment", "抽2张牌"));
-            prototypes.Add(new OrderCard("征税", "Taxation", "加2HP"));
-            prototypes.Add(new OrderCard("征税", "Taxation", "加2HP"));
+            prototypes.Add(new OrderCard("征税", "Taxation", "加1HP"));
+            prototypes.Add(new OrderCard("征税", "Taxation", "加1HP"));
             prototypes.Add(new OrderCard("分封", "Enfeoffment", "减1HP，抽3张牌"));
-            prototypes.Add(new OrderCard("倾巢出动", "AllOutAttack", "打出手牌中所有部队牌，每张视作一次特殊进攻，且不会被追击"));
-            prototypes.Add(new OrderCard("假装撤退", "FakeRetreat", "弃掉一张部队牌，下回合开始时抽2张牌"));
-            prototypes.Add(new OrderCard("绝罚", "Anathema", "选择对方一张手牌将其弃掉"));
+            prototypes.Add(new OrderCard("倾巢出动", "AllOutAttack", "本回合所有的进攻视为特殊进攻，且不会被追击"));
+            prototypes.Add(new OrderCard("假装撤退", "FakeRetreat", "随机弃掉一张部队牌，下回合开始时抽2张牌"));
+            prototypes.Add(new OrderCard("绝罚", "Anathema", "随机弃掉一张对方手牌"));
 
             // 建筑牌 7张
             prototypes.Add(new BuildingCard("庄园", "Manor", "每回合开始额外抽1张牌"));
@@ -44,8 +44,8 @@ namespace NormanConquest
             prototypes.Add(new BuildingCard("城堡", "Castle", "每回合可多进行一次通常进攻"));
             prototypes.Add(new BuildingCard("马厩", "Stable", "己方骑兵进攻成功时，该骑兵不会进入弃牌堆"));
             prototypes.Add(new BuildingCard("兵营", "Barracks", "部队牌不计入手牌上限"));
-            prototypes.Add(new BuildingCard("教堂", "Church", "待设计"));
-            prototypes.Add(new BuildingCard("市场", "Market", "待设计"));
+            prototypes.Add(new BuildingCard("教堂", "Church", "进攻成功时，加1HP"));
+            prototypes.Add(new BuildingCard("市场", "Market", "己方弃牌时，抽1张牌"));
         }
 
         // 生成一副洗好的牌堆

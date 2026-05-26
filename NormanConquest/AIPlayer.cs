@@ -16,7 +16,7 @@ namespace NormanConquest
             Player opponent = game.player;
 
             // 优先级1：有部队牌且能进攻 → 通常进攻
-            if (self.RemainingNormalAttacks > 0 )
+            if (self.RemainingNormalAttacks > 0 || self.PendingEffects.Contains("AllOutAttack"))
             {
                 int attackUnitIdx = ChooseAttackUnit(self, opponent);
                 if (attackUnitIdx != -1)

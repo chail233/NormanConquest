@@ -10,7 +10,7 @@ namespace NormanConquest
         private static Random rng = new Random();
 
         /// Fisher-Yates 洗牌，直接修改原列表
-        public static void Shuffle<T>(List<T> list)// 泛型方法，适用于任何类型的列表,T是一个占位符，表示列表中元素的类型
+        public static void Shuffle(List<Card> list)
         {
             for (int i = list.Count - 1; i > 0; i--)
             {

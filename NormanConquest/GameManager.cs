@@ -17,14 +17,16 @@ namespace NormanConquest
         private int initialHP = 5;
         public bool processing = false;//当前是否正在处理某个效果，防止同时处理多个效果导致状态混乱
         public Attack currentAttack { get; set; }
+        private EffectExecutor effectExecutor {  get; set; }
         public GameManager()
         {
             // 初始化游戏状态
             player = new Player("玩家", initialHP);
             opponent = new Player("敌人", initialHP);
             currentPlayer = player;
+            effectExecutor = new EffectExecutor(this);
         }
-        void log(string message)
+        public void log(string message)
         {
             UI.Logout(message);
         }
@@ -46,6 +48,11 @@ namespace NormanConquest
         //结束回合
         public void EndTurn()
         {
+            if(currentPlayer.PendingEffects.Contains("AllOutAttack"))
+            {
+                log($"{currentPlayer.Name}的倾巢出动效果结束。");
+                currentPlayer.PendingEffects.Remove("AllOutAttack");
+            }
             log($"{currentPlayer.Name}结束回合。");
             // 切换当前玩家
             currentPlayer = (currentPlayer == player) ? opponent : player;
@@ -152,7 +159,7 @@ namespace NormanConquest
             UI.Refresh();
         }
         //抽牌
-        private void DrawCard(Player player)
+        public void DrawCard(Player player)
         {
             processing = true;
             if (player.Deck.Count == 0)
@@ -165,16 +172,18 @@ namespace NormanConquest
             }
             else
             {
-                if (player.Hand.Count >= player.HandLimit)
-                {
-                    Card discardedCard = player.DiscardTopCard();
-                    log($"{player.Name}的手牌已满，抽牌时丢弃了 {discardedCard.Name}。");
-                }
-                else
-                {
-                    Card drawnCard = player.DrawCard();
-                    log($"{player.Name}抽到了 {drawnCard.Name}。");
-                }
+                Card drawnCard = player.DrawCard();
+                log($"{player.Name}抽到了 {drawnCard.Name}。");
+                //if (player.Hand.Count >= player.HandLimit)
+                //{
+                //    Card discardedCard = player.DiscardTopCard();
+                //    log($"{player.Name}的手牌已满，抽牌时丢弃了 {discardedCard.Name}。");
+                //}
+                //else
+                //{
+                //    Card drawnCard = player.DrawCard();
+                //    log($"{player.Name}抽到了 {drawnCard.Name}。");
+                //}
             }
             UI.Refresh();
             processing = false;
@@ -188,8 +197,18 @@ namespace NormanConquest
             processing = false;
             UI.Refresh();
         }
+        //弃牌
+        public void Discard(Player player, int idx)
+        {
+            player.DiscardFromHand(idx);
+            if(haveBuilding(player, "市场"))
+            {
+                DrawCard(player);
+                log($"{player.Name}的市场！");
+            }
+        }
         //扣血
-        private void TakeDamage(Player player, int damage)
+        public void TakeDamage(Player player, int damage)
         {
             processing = true;
             player.HP -= damage;
@@ -206,13 +225,49 @@ namespace NormanConquest
         private void Effect(Player player, string effectName)
         {
             processing = true;
-            //实现
+            switch (effectName)
+            {
+                case "AllOutAttack":
+                    
+                    effectExecutor.AllOutAttack(player);
+                    break;
+                case "Levy":
+                    effectExecutor.Levy(player);
+                    break;
+                case "LandDevelopment":
+                    effectExecutor.LandDevelopment(player);
+                    break;
+                case "Taxation":
+                    effectExecutor.Taxation(player);
+                    break;
+                case "Enfeoffment":
+                    effectExecutor.Enfeoffment(player);
+                    break;
+                case "FakeRetreat":
+                    effectExecutor.FakeRetreat(player);
+                    break;
+                case "Anathema":
+                    effectExecutor.Anathema(player);
+                    break;
+            }
             processing = false;
             UI.Refresh();
+        }
+        public void AddEffect(Player player, string effectName)
+        {
+            player.PendingEffects.Add(effectName);
+            log($"{player.Name}获得了一个效果：{effectName}。");
         }
         //进攻
         public void TryAttack(Player Attacker, Player Defender, UnitCard AttackUnit, int attackerUnitIndex)
         {
+            if(Attacker.PendingEffects.Contains("AllOutAttack"))
+            {
+                log($"{Attacker.Name}的倾巢出动！");
+                TrySpecialAttack(Attacker, Defender, AttackUnit, attackerUnitIndex);
+                currentAttack.PursuitDisabled = true;
+                return;
+            }
             if (Attacker.RemainingNormalAttacks <= 0)
             {
                 log($"{Attacker.Name}没有剩余的通常攻击次数了，无法发动攻击。");
@@ -251,12 +306,12 @@ namespace NormanConquest
                 (currentAttack.AttackUnit.UnitType == UnitType.LightCavalry || currentAttack.AttackUnit.UnitType == UnitType.HeavyCavalry))
             {
                 UI.Logout("由于攻击单位是骑兵且攻击方拥有马厩，攻击方不丢牌");
-                currentAttack.Defender.DiscardFromHand(currentAttack.DefenderUnitIndex);
+                Discard(currentAttack.Defender, currentAttack.DefenderUnitIndex);
             }
             else
             {
-                currentAttack.Attacker.DiscardFromHand(currentAttack.AttackerUnitIndex);
-                currentAttack.Defender.DiscardFromHand(currentAttack.DefenderUnitIndex);
+                Discard(currentAttack.Attacker, currentAttack.AttackerUnitIndex);
+                Discard(currentAttack.Defender, currentAttack.DefenderUnitIndex);
             }
             if (currentAttack.DamageDealt)
             {
@@ -279,12 +334,12 @@ namespace NormanConquest
                 (currentAttack.AttackUnit.UnitType == UnitType.LightCavalry || currentAttack.AttackUnit.UnitType == UnitType.HeavyCavalry))
             {
                 UI.Logout("由于攻击单位是骑兵且攻击方拥有马厩，攻击方不丢牌");
-                currentAttack.Defender.DiscardFromHand(currentAttack.DefenderUnitIndex);
+                Discard(currentAttack.Defender, currentAttack.DefenderUnitIndex);
             }
             else
             {
-                currentAttack.Attacker.DiscardFromHand(currentAttack.AttackerUnitIndex);
-                currentAttack.Defender.DiscardFromHand(currentAttack.DefenderUnitIndex);
+                Discard(currentAttack.Attacker, currentAttack.AttackerUnitIndex);
+                Discard(currentAttack.Defender, currentAttack.DefenderUnitIndex);
             }
             UI.Logout("攻击成功，造成了伤害！");
             TakeDamage(currentAttack.Defender, 1);
@@ -306,20 +361,19 @@ namespace NormanConquest
         public void TakeOrder(Player player, int CardIdx)
         {
             OrderCard order = (OrderCard)player.Hand[CardIdx];
-            player.DiscardFromHand(CardIdx);
+            Discard(player, CardIdx);
             log($"{player.Name}使用了指令牌：{order.Name}。");
-            //根据命令效果进行处理
+            Effect(player, order.EffectName);
             UI.Refresh();
         }
         public void TakeBuilding(Player player, int CardIdx)
         {
             BuildingCard building = (BuildingCard)player.Hand[CardIdx];
-            player.DiscardFromHand(CardIdx);
+            Discard(player, CardIdx);
             log($"{player.Name}建造了建筑：{building.Name}。");
             //根据建筑效果进行处理
             UI.Refresh();
         }
-
         public interface IGameUI
         {
             void Refresh();
