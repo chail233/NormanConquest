@@ -14,7 +14,6 @@ namespace NormanConquest
         public Player opponent { get; set; }
         public AIPlayer AI { get; set; } = new AIPlayer();
         public Player currentPlayer { get; set; }
-        public bool isFirstTurn { get; set; }
         private int initialHP = 5;
         public bool processing = false;//当前是否正在处理某个效果，防止同时处理多个效果导致状态混乱
         public Attack currentAttack { get; set; }
@@ -35,7 +34,6 @@ namespace NormanConquest
             player = new Player("玩家", initialHP);
             opponent = new Player("敌人", initialHP);
             currentPlayer = player; // 玩家先手
-            isFirstTurn = true;
             // 游戏开始时双方各抽initialHP张牌
             for (int i = 0; i < initialHP; i++)
             {
@@ -51,7 +49,6 @@ namespace NormanConquest
             log($"{currentPlayer.Name}结束回合。");
             // 切换当前玩家
             currentPlayer = (currentPlayer == player) ? opponent : player;
-            isFirstTurn = false;
             UI.Refresh();
             StartTurn();
             UI.Refresh();
@@ -61,8 +58,11 @@ namespace NormanConquest
         {
             log($"{currentPlayer.Name}的回合开始。");
             processing = true;
-            // 回合开始时抽一张牌
-            if (!isFirstTurn) DrawCard(currentPlayer);
+            // 回合开始时牌
+            while(currentPlayer.Hand.Count < currentPlayer.HP)
+            {
+                DrawCard(currentPlayer);
+            }
             if (haveBuilding(currentPlayer, "庄园"))
             {
                 log($"{currentPlayer.Name}拥有庄园。所以额外抽一张牌");
