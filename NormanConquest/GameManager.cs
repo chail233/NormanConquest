@@ -235,7 +235,7 @@ namespace NormanConquest
             if (player.HP <= 0)
             {
                 log($"{player.Name}被击败了！");
-                // 游戏结束处理
+                UI.GameOver((player == this.player) ? opponent : player);
             }
             processing = false;
             UI.Refresh();
@@ -422,12 +422,14 @@ namespace NormanConquest
             log($"{player.Name}的建筑区新增了{building.Name}。");
             UI.Refresh();
         }
+        
         public interface IGameUI
         {
             void Refresh();
             void Logout(string message);
             void PromptDefense(Attack attack);
             void EnableEndTurnButton();
+            void GameOver(Player winner);
         }
     }
 }

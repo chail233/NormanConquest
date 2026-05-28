@@ -7,12 +7,18 @@ namespace NormanConquest
         private int CardHeight = 140;
         private int CardSpace = 10;
         private bool needDefense = false;
+        private int width;
+        private int height;
         public FormMain()
         {
             InitializeComponent();
             gameManager = new GameManager();
             gameManager.UI = this; // 将界面实例传递给游戏管理器
             Logout("窗口实例初始化");
+            width = this.ClientSize.Width;
+            height = this.ClientSize.Height;
+            CardHeight = (int)(Height / 6);
+            CardWidth = (int)(CardHeight * 0.66);
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -129,7 +135,7 @@ namespace NormanConquest
         }
         public void OrderCard_Click(object sender, EventArgs e)
         {
-            if(needDefense)
+            if (needDefense)
             {
                 Logout("正在等待防守，无法使用指令牌");
                 return;
@@ -140,7 +146,7 @@ namespace NormanConquest
         }
         public void BuildingCard_Click(object sender, EventArgs e)
         {
-            if(needDefense)
+            if (needDefense)
             {
                 Logout("正在等待防守，无法使用建筑牌");
                 return;
@@ -201,9 +207,9 @@ namespace NormanConquest
             {
                 Text = card.Name,
                 ForeColor = Color.White,
-                Font = new Font("微软雅黑", 10, FontStyle.Bold),
+                Font = new Font("微软雅黑", 15, FontStyle.Bold),
                 AutoSize = false,
-                Size = new Size(width - 4, 25),
+                Size = new Size(width - 4, height / 4),
                 TextAlign = ContentAlignment.MiddleCenter,
                 Location = new Point(2, 2),
                 Enabled = false          // 不接收鼠标事件
@@ -217,11 +223,11 @@ namespace NormanConquest
                 {
                     Text = unit.UnitType.ToString(),
                     ForeColor = Color.LightGray,
-                    Font = new Font("微软雅黑", 8),
+                    Font = new Font("微软雅黑", 12),
                     AutoSize = false,
-                    Size = new Size(width - 4, 20),
+                    Size = new Size(width - 4, height / 4),
                     TextAlign = ContentAlignment.MiddleCenter,
-                    Location = new Point(2, 55),
+                    Location = new Point(2, height / 4 + 35),
                     Enabled = false
                 };
                 panel.Controls.Add(typeLabel);
@@ -234,11 +240,11 @@ namespace NormanConquest
                 {
                     Text = card.Description,
                     ForeColor = Color.WhiteSmoke,
-                    Font = new Font("微软雅黑", 7),
+                    Font = new Font("微软雅黑", 10),
                     AutoSize = false,
-                    Size = new Size(width - 8, 50),
+                    Size = new Size(width - 8, height / 4),
                     TextAlign = ContentAlignment.TopLeft,
-                    Location = new Point(4, 80),
+                    Location = new Point(4, height * 3 / 4 - 25),
                     Enabled = false
                 };
                 panel.Controls.Add(descLabel);
@@ -309,6 +315,21 @@ namespace NormanConquest
             gameManager.TakeAttackWithoutDefense();
             buttonPassDefense.Visible = false;
             needDefense = false;
+        }
+        public void GameOver(Player winner)
+        {
+            this.Tag = new FormOver(winner);
+            this.Close();
+        }
+
+
+        private void FormMain_Resize(object sender, EventArgs e)
+        {
+            width = this.ClientSize.Width;
+            height = this.ClientSize.Height;
+            CardHeight = (int)(Height / 5);
+            CardWidth = (int)(CardHeight * 0.66);
+            Refresh();
         }
     }
 }

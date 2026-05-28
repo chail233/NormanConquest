@@ -43,7 +43,6 @@
             labelPlayerName = new Label();
             panelGameInfo = new Panel();
             textBoxLog = new TextBox();
-            labelGameInfo = new Label();
             flowOpponentHand = new FlowLayoutPanel();
             flowOpponentBuilding = new FlowLayoutPanel();
             flowPlayerHand = new FlowLayoutPanel();
@@ -79,13 +78,13 @@
             tableLayoutMain.Location = new Point(0, 0);
             tableLayoutMain.Name = "tableLayoutMain";
             tableLayoutMain.RowCount = 7;
-            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 9.090909F));
-            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
-            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
-            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 9.090909F));
-            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
-            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
-            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 9.090909F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 11.1111107F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+            tableLayoutMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
             tableLayoutMain.Size = new Size(1395, 892);
             tableLayoutMain.TabIndex = 0;
             // 
@@ -98,7 +97,7 @@
             panelOpponentInfo.Dock = DockStyle.Fill;
             panelOpponentInfo.Location = new Point(3, 3);
             panelOpponentInfo.Name = "panelOpponentInfo";
-            panelOpponentInfo.Size = new Size(1389, 75);
+            panelOpponentInfo.Size = new Size(1389, 74);
             panelOpponentInfo.TabIndex = 0;
             // 
             // labelOpponentHP
@@ -138,15 +137,15 @@
             panelPlayerInfo.Controls.Add(labelPlayerHP);
             panelPlayerInfo.Controls.Add(labelPlayerName);
             panelPlayerInfo.Dock = DockStyle.Fill;
-            panelPlayerInfo.Location = new Point(3, 813);
+            panelPlayerInfo.Location = new Point(3, 812);
             panelPlayerInfo.Name = "panelPlayerInfo";
-            panelPlayerInfo.Size = new Size(1389, 76);
+            panelPlayerInfo.Size = new Size(1389, 77);
             panelPlayerInfo.TabIndex = 1;
             // 
             // buttonRefresh
             // 
             buttonRefresh.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonRefresh.Location = new Point(940, 0);
+            buttonRefresh.Location = new Point(940, 1);
             buttonRefresh.Name = "buttonRefresh";
             buttonRefresh.Size = new Size(145, 76);
             buttonRefresh.TabIndex = 2;
@@ -157,7 +156,7 @@
             // buttonPassDefense
             // 
             buttonPassDefense.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonPassDefense.Location = new Point(1091, 0);
+            buttonPassDefense.Location = new Point(1091, 1);
             buttonPassDefense.Name = "buttonPassDefense";
             buttonPassDefense.Size = new Size(145, 76);
             buttonPassDefense.TabIndex = 2;
@@ -169,7 +168,7 @@
             // buttonEndTurn
             // 
             buttonEndTurn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonEndTurn.Location = new Point(1239, 0);
+            buttonEndTurn.Location = new Point(1239, 1);
             buttonEndTurn.Name = "buttonEndTurn";
             buttonEndTurn.Size = new Size(147, 76);
             buttonEndTurn.TabIndex = 1;
@@ -181,7 +180,7 @@
             // 
             labelPileCount.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             labelPileCount.AutoSize = true;
-            labelPileCount.Location = new Point(202, 29);
+            labelPileCount.Location = new Point(202, 30);
             labelPileCount.Name = "labelPileCount";
             labelPileCount.Size = new Size(64, 24);
             labelPileCount.TabIndex = 0;
@@ -191,7 +190,7 @@
             // 
             labelPlayerHP.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             labelPlayerHP.AutoSize = true;
-            labelPlayerHP.Location = new Point(136, 29);
+            labelPlayerHP.Location = new Point(136, 30);
             labelPlayerHP.Name = "labelPlayerHP";
             labelPlayerHP.Size = new Size(39, 24);
             labelPlayerHP.TabIndex = 0;
@@ -201,7 +200,7 @@
             // 
             labelPlayerName.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             labelPlayerName.AutoSize = true;
-            labelPlayerName.Location = new Point(37, 29);
+            labelPlayerName.Location = new Point(37, 30);
             labelPlayerName.Name = "labelPlayerName";
             labelPlayerName.Size = new Size(82, 24);
             labelPlayerName.TabIndex = 0;
@@ -211,40 +210,28 @@
             // 
             panelGameInfo.BackColor = Color.LightGray;
             panelGameInfo.Controls.Add(textBoxLog);
-            panelGameInfo.Controls.Add(labelGameInfo);
             panelGameInfo.Dock = DockStyle.Fill;
-            panelGameInfo.Location = new Point(3, 408);
+            panelGameInfo.Location = new Point(3, 407);
             panelGameInfo.Name = "panelGameInfo";
             panelGameInfo.Size = new Size(1389, 75);
             panelGameInfo.TabIndex = 2;
             // 
             // textBoxLog
             // 
-            textBoxLog.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            textBoxLog.Font = new Font("Microsoft YaHei UI", 7.5F, FontStyle.Regular, GraphicsUnit.Point, 134);
-            textBoxLog.Location = new Point(995, 3);
+            textBoxLog.Dock = DockStyle.Fill;
+            textBoxLog.Font = new Font("华文仿宋", 13.9999981F, FontStyle.Regular, GraphicsUnit.Point, 134);
+            textBoxLog.Location = new Point(0, 0);
             textBoxLog.Multiline = true;
             textBoxLog.Name = "textBoxLog";
             textBoxLog.ScrollBars = ScrollBars.Vertical;
-            textBoxLog.Size = new Size(385, 69);
+            textBoxLog.Size = new Size(1389, 75);
             textBoxLog.TabIndex = 1;
-            // 
-            // labelGameInfo
-            // 
-            labelGameInfo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            labelGameInfo.AutoSize = true;
-            labelGameInfo.Font = new Font("华文新魏", 17.9999981F, FontStyle.Regular, GraphicsUnit.Point, 134);
-            labelGameInfo.Location = new Point(9, 20);
-            labelGameInfo.Name = "labelGameInfo";
-            labelGameInfo.Size = new Size(87, 36);
-            labelGameInfo.TabIndex = 0;
-            labelGameInfo.Text = "信息";
             // 
             // flowOpponentHand
             // 
             flowOpponentHand.AutoScroll = true;
             flowOpponentHand.Dock = DockStyle.Fill;
-            flowOpponentHand.Location = new Point(3, 84);
+            flowOpponentHand.Location = new Point(3, 83);
             flowOpponentHand.Name = "flowOpponentHand";
             flowOpponentHand.Size = new Size(1389, 156);
             flowOpponentHand.TabIndex = 3;
@@ -253,7 +240,7 @@
             // 
             flowOpponentBuilding.AutoScroll = true;
             flowOpponentBuilding.Dock = DockStyle.Fill;
-            flowOpponentBuilding.Location = new Point(3, 246);
+            flowOpponentBuilding.Location = new Point(3, 245);
             flowOpponentBuilding.Name = "flowOpponentBuilding";
             flowOpponentBuilding.Size = new Size(1389, 156);
             flowOpponentBuilding.TabIndex = 4;
@@ -262,7 +249,7 @@
             // 
             flowPlayerHand.AutoScroll = true;
             flowPlayerHand.Dock = DockStyle.Fill;
-            flowPlayerHand.Location = new Point(3, 651);
+            flowPlayerHand.Location = new Point(3, 650);
             flowPlayerHand.Name = "flowPlayerHand";
             flowPlayerHand.Size = new Size(1389, 156);
             flowPlayerHand.TabIndex = 5;
@@ -271,7 +258,7 @@
             // 
             flowPlayerBuilding.AutoScroll = true;
             flowPlayerBuilding.Dock = DockStyle.Fill;
-            flowPlayerBuilding.Location = new Point(3, 489);
+            flowPlayerBuilding.Location = new Point(3, 488);
             flowPlayerBuilding.Name = "flowPlayerBuilding";
             flowPlayerBuilding.Size = new Size(1389, 156);
             flowPlayerBuilding.TabIndex = 6;
@@ -280,6 +267,7 @@
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
             BackColor = SystemColors.ControlDarkDark;
             ClientSize = new Size(1395, 892);
             Controls.Add(tableLayoutMain);
@@ -288,7 +276,9 @@
             Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "NormanConquest";
+            WindowState = FormWindowState.Maximized;
             Load += FormMain_Load;
+            Resize += FormMain_Resize;
             tableLayoutMain.ResumeLayout(false);
             panelOpponentInfo.ResumeLayout(false);
             panelOpponentInfo.PerformLayout();
@@ -316,7 +306,6 @@
         private Label labelOpponentName;
         private Label labelPileCount;
         private Label labelPlayerHP;
-        private Label labelGameInfo;
         private Button buttonEndTurn;
         private Button buttonPassDefense;
         private TextBox textBoxLog;
