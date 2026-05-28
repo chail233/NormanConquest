@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOver));
             labelIcon = new Label();
             labelDesc = new Label();
             buttonRestart = new Button();
@@ -76,6 +77,7 @@
             Controls.Add(labelIcon);
             Cursor = Cursors.Cross;
             DoubleBuffered = true;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormOver";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FormOver";

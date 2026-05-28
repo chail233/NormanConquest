@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             boxLog = new TextBox();
             tableLayoutMain = new TableLayoutPanel();
             panelOpponentInfo = new Panel();
@@ -168,6 +169,7 @@
             // buttonEndTurn
             // 
             buttonEndTurn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonEndTurn.BackgroundImageLayout = ImageLayout.Stretch;
             buttonEndTurn.Location = new Point(1239, 1);
             buttonEndTurn.Name = "buttonEndTurn";
             buttonEndTurn.Size = new Size(147, 76);
@@ -230,6 +232,8 @@
             // flowOpponentHand
             // 
             flowOpponentHand.AutoScroll = true;
+            flowOpponentHand.BackgroundImage = Properties.Resources.纸顶_2_paper_top_2__爱给网_aigei_com;
+            flowOpponentHand.BackgroundImageLayout = ImageLayout.Stretch;
             flowOpponentHand.Dock = DockStyle.Fill;
             flowOpponentHand.Location = new Point(3, 83);
             flowOpponentHand.Name = "flowOpponentHand";
@@ -239,6 +243,8 @@
             // flowOpponentBuilding
             // 
             flowOpponentBuilding.AutoScroll = true;
+            flowOpponentBuilding.BackgroundImage = Properties.Resources.纸顶_2_paper_top_2__爱给网_aigei_com;
+            flowOpponentBuilding.BackgroundImageLayout = ImageLayout.Stretch;
             flowOpponentBuilding.Dock = DockStyle.Fill;
             flowOpponentBuilding.Location = new Point(3, 245);
             flowOpponentBuilding.Name = "flowOpponentBuilding";
@@ -248,6 +254,8 @@
             // flowPlayerHand
             // 
             flowPlayerHand.AutoScroll = true;
+            flowPlayerHand.BackgroundImage = Properties.Resources.纸顶_2_paper_top_2__爱给网_aigei_com;
+            flowPlayerHand.BackgroundImageLayout = ImageLayout.Stretch;
             flowPlayerHand.Dock = DockStyle.Fill;
             flowPlayerHand.Location = new Point(3, 650);
             flowPlayerHand.Name = "flowPlayerHand";
@@ -257,6 +265,8 @@
             // flowPlayerBuilding
             // 
             flowPlayerBuilding.AutoScroll = true;
+            flowPlayerBuilding.BackgroundImage = Properties.Resources.纸顶_2_paper_top_2__爱给网_aigei_com;
+            flowPlayerBuilding.BackgroundImageLayout = ImageLayout.Stretch;
             flowPlayerBuilding.Dock = DockStyle.Fill;
             flowPlayerBuilding.Location = new Point(3, 488);
             flowPlayerBuilding.Name = "flowPlayerBuilding";
@@ -273,6 +283,7 @@
             Controls.Add(tableLayoutMain);
             Cursor = Cursors.Hand;
             DoubleBuffered = true;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "NormanConquest";

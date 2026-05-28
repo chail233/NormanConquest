@@ -179,7 +179,11 @@ namespace NormanConquest
                 TakeDamage(player, 1);
                 ResetDeck(player);
                 Card drawnCard = player.DrawCard();
-                log($"{player.Name}抽到了 {drawnCard.Name}。");
+                if(player.Name == "玩家")
+                {
+                    log($"{player.Name}抽到了 {drawnCard.Name}。");
+                }
+                else log($"{player.Name}抽了一张牌。");
             }
             else
             {
