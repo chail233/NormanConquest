@@ -16,6 +16,7 @@ namespace NormanConquest
         public Player currentPlayer { get; set; }
         private int initialHP = 5;
         public bool processing = false;//当前是否正在处理某个效果，防止同时处理多个效果导致状态混乱
+        private bool marketeffectused = false;//标记市场效果是否已经使用过了，确保每回合只触发一次
         public Attack currentAttack { get; set; }
         private EffectExecutor effectExecutor {  get; set; }
         public GameManager()
@@ -65,7 +66,8 @@ namespace NormanConquest
         {
             log($"{currentPlayer.Name}的回合开始。");
             processing = true;
-            // 回合开始时牌
+            marketeffectused = false;
+            // 回合开始时抽牌
             while(currentPlayer.Hand.Count < currentPlayer.HP)
             {
                 DrawCard(currentPlayer);
@@ -140,6 +142,15 @@ namespace NormanConquest
             }
             return false;
         }
+        //找到某个建筑的索引
+        private int findBuildingIndex(Player player, string name)
+        {
+            for (int i = 0; i < player.BuildingZone.Count; i++)
+            {
+                if (player.BuildingZone[i].Name == name) return i;
+            }
+            return -1;
+        }
         //处理回合开始效果
         private void ProcessPendingEffects(Player player)
         {
@@ -201,11 +212,19 @@ namespace NormanConquest
         public void Discard(Player player, int idx)
         {
             player.DiscardFromHand(idx);
-            if(haveBuilding(player, "市场"))
+            if(haveBuilding(player, "市场") && !marketeffectused)
             {
                 DrawCard(player);
                 log($"{player.Name}的市场！");
+                marketeffectused = true;
             }
+        }
+        //弃建筑牌
+        public void DiscardBuilding(Player player, int idx)
+        {
+            player.DiscardPile.Add(player.BuildingZone[idx]);
+            player.BuildingZone.RemoveAt(idx);
+            log($"{player.Name}失去了一个建筑！");
         }
         //扣血
         public void TakeDamage(Player player, int damage)
@@ -302,6 +321,12 @@ namespace NormanConquest
             currentAttack.DefenderUnitIndex = DefenseUnitIndex;
             log($"{currentAttack.Defender.Name}使用{DefenseUnit.Name}防御");
             currentAttack.Execute();
+            if(currentAttack.DamageDealt && haveBuilding(currentAttack.Defender, "城墙"))
+            {
+                log("由于防御方拥有城墙，此次进攻失败！");
+                DiscardBuilding(currentAttack.Defender, findBuildingIndex(currentAttack.Defender, "城墙"));
+                currentAttack.DamageDealt = false;
+            }
             if (haveBuilding(currentAttack.Attacker, "马厩") &&
                 (currentAttack.AttackUnit.UnitType == UnitType.LightCavalry || currentAttack.AttackUnit.UnitType == UnitType.HeavyCavalry))
             {
@@ -315,8 +340,19 @@ namespace NormanConquest
             }
             if (currentAttack.DamageDealt)
             {
+                int demage = 1;
+                if (haveBuilding(currentAttack.Attacker, "兵营"))
+                {
+                    log("由于攻击方拥有兵营，攻击造成的伤害增加1点！");
+                    demage += 1;
+                }
                 UI.Logout("攻击成功，造成了伤害！");
-                TakeDamage(currentAttack.Defender, 1);
+                TakeDamage(currentAttack.Defender, demage);
+                if(haveBuilding(currentAttack.Attacker, "教堂"))
+                {
+                    log("由于攻击方拥有教堂，攻击方回复了1点HP！");
+                    currentAttack.Attacker.HP += 1;
+                }
             }
             if (currentAttack.NeedPursuit)
             {
@@ -369,9 +405,21 @@ namespace NormanConquest
         public void TakeBuilding(Player player, int CardIdx)
         {
             BuildingCard building = (BuildingCard)player.Hand[CardIdx];
-            Discard(player, CardIdx);
-            log($"{player.Name}建造了建筑：{building.Name}。");
-            //根据建筑效果进行处理
+            player.Hand.RemoveAt(CardIdx);
+            AddBuilding(player, building);
+            UI.Refresh();
+        }
+        public void AddBuilding(Player player, BuildingCard building)
+        {
+            if(player.BuildingZone.Count >= player.BuildingLimit)
+            {
+                log($"{player.Name}的建筑区已满，无法建造{building.Name}。");
+                player.DiscardPile.Add(building);
+                UI.Refresh();
+                return;
+            }
+            player.BuildingZone.Add(building);
+            log($"{player.Name}的建筑区新增了{building.Name}。");
             UI.Refresh();
         }
         public interface IGameUI
