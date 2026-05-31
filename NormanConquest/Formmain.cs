@@ -2,7 +2,7 @@ namespace NormanConquest
 {
     public partial class FormMain : Form, GameManager.IGameUI
     {
-        private GameManager gameManager;
+        public GameManager gameManager;
         private int CardWidth = 90;
         private int CardHeight = 140;
         private int CardSpace = 10;
@@ -20,7 +20,6 @@ namespace NormanConquest
             CardHeight = (int)(Height / 6);
             CardWidth = (int)(CardHeight * 0.66);
         }
-
         private void FormMain_Load(object sender, EventArgs e)
         {
             gameManager.StartGame();

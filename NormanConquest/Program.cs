@@ -11,7 +11,7 @@ namespace NormanConquest
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Form currentForm = new FormMain();
+            Form currentForm = new FormMenu();
             while (currentForm != null)
             {
                 Application.Run(currentForm);

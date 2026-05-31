@@ -36,6 +36,16 @@ namespace NormanConquest
             log("游戏开始！");
             player = new Player("玩家", initialHP);
             opponent = new Player("敌人", initialHP);
+            if (player.CharacterIndex == 1)
+            {
+                log("玩家选择了英格兰国王，HP+2。");
+                player.HP += 2;
+            }
+            else
+            {
+                log("敌人选择了英格兰国王，HP+2。");
+                opponent.HP += 2;
+            }
             currentPlayer = player; // 玩家先手
             // 游戏开始时双方各抽initialHP张牌
             for (int i = 0; i < initialHP; i++)
@@ -348,6 +358,11 @@ namespace NormanConquest
                 if (haveBuilding(currentAttack.Attacker, "兵营"))
                 {
                     log("由于攻击方拥有兵营，攻击造成的伤害增加1点！");
+                    demage += 1;
+                }
+                if (currentAttack.Attacker.CharacterIndex == 0)
+                {
+                    log("由于攻击方是诺曼底公爵，攻击造成的伤害增加1点！");
                     demage += 1;
                 }
                 UI.Logout("攻击成功，造成了伤害！");

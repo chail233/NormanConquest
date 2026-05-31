@@ -15,6 +15,7 @@ namespace NormanConquest
         public List<BuildingCard> BuildingZone { get; private set; }
         public int RemainingNormalAttacks { get; set; }
         public List<string> PendingEffects { get; private set; }
+        public int CharacterIndex { get; set; } // 0 或 1，表示玩家选择的角色
 
         public Player(string name, int initialHP)
         {

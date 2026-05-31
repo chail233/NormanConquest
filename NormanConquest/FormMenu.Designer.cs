@@ -37,6 +37,7 @@
             // 
             // labelStart1
             // 
+            labelStart1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             labelStart1.AutoSize = true;
             labelStart1.BackColor = Color.Transparent;
             labelStart1.Cursor = Cursors.Hand;
@@ -48,9 +49,11 @@
             labelStart1.Size = new Size(239, 44);
             labelStart1.TabIndex = 0;
             labelStart1.Text = "以威廉开始";
+            labelStart1.Click += labelStart1_Click;
             // 
             // labelStart2
             // 
+            labelStart2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             labelStart2.AutoSize = true;
             labelStart2.BackColor = Color.Transparent;
             labelStart2.Cursor = Cursors.Hand;
@@ -62,9 +65,11 @@
             labelStart2.Size = new Size(283, 44);
             labelStart2.TabIndex = 0;
             labelStart2.Text = "以哈罗德开始";
+            labelStart2.Click += labelStart2_Click;
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.BackColor = Color.Transparent;
             label1.Cursor = Cursors.Hand;
@@ -80,6 +85,7 @@
             // 
             // linkLabelRule
             // 
+            linkLabelRule.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             linkLabelRule.AutoSize = true;
             linkLabelRule.BackColor = Color.Transparent;
             linkLabelRule.Cursor = Cursors.Hand;
