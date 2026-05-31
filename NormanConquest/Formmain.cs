@@ -9,6 +9,14 @@ namespace NormanConquest
         private bool needDefense = false;
         private int width;
         private int height;
+        AudioPlayer bgmplayer;
+        private List<string> bgmList = new List<string>
+            {
+                @"bgms\bgm1.wav",
+                @"bgms\bgm2.wav",
+                @"bgms\bgm3.wav"
+            };
+        int bgmidx = new Random().Next(3);
         public FormMain()
         {
             InitializeComponent();
@@ -29,6 +37,8 @@ namespace NormanConquest
             labelOpponentName.Text = gameManager.opponent.Name;
             labelOpponentHP.Text = $"HP: {gameManager.opponent.HP}";
             labelOpponentPileCount.Text = $"牌堆:{gameManager.opponent.Deck.Count}张";
+            bgmplayer = new AudioPlayer(bgmList[bgmidx]);
+            bgmplayer.Play(loop: true);
         }
         public void Logout(string message)
         {

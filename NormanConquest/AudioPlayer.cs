@@ -24,35 +24,39 @@ namespace NormanConquest
             this.isPlaying = false;
         }
 
-        // 播放（默认不循环）
+        // 播放
         public void Play(bool loop = false)
         {
             Stop();
             isLooping = loop;
-            string loopFlag = loop ? " REPEAT" : "";
-            // 打开音频文件
-            mciSendString($"open \"{filePath}\" alias {alias}", null, 0, IntPtr.Zero);
-            // 播放
-            mciSendString($"play {alias} from 0{loopFlag}", null, 0, IntPtr.Zero);
+            string path = filePath;
+            string openCmd = $"open \"{path}\" type mpegvideo alias {alias}";
+            int err = mciSendString(openCmd, null, 0, IntPtr.Zero);
+            if (err != 0)
+            {
+                // 可选：打错误信息
+                return;
+            }
+
+            string playCmd = loop
+                ? $"play {alias} from 0 repeat"
+                : $"play {alias} from 0";
+
+            mciSendString(playCmd, null, 0, IntPtr.Zero);
             isPlaying = true;
         }
-
         // 停止播放
         public void Stop()
         {
             if (isPlaying)
             {
-                mciSendString($"stop {alias}", null, 0, IntPtr.Zero);
-                mciSendString($"close {alias}", null, 0, IntPtr.Zero);
+                if (!string.IsNullOrEmpty(alias))
+                {
+                    mciSendString($"stop {alias}", null, 0, IntPtr.Zero);
+                    mciSendString($"close {alias}", null, 0, IntPtr.Zero);
+                }
                 isPlaying = false;
             }
-        }
-
-        // 设置音量 0-1000
-        public void SetVolume(int volume)
-        {
-            volume = Math.Clamp(volume, 0, 1000);
-            mciSendString($"setaudio {alias} volume to {volume}", null, 0, IntPtr.Zero);
         }
 
         // 释放资源

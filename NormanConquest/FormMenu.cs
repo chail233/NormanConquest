@@ -10,6 +10,7 @@ namespace NormanConquest
 {
     public partial class FormMenu : Form
     {
+        private AudioPlayer bgmplayer = new AudioPlayer(@"bgms\bgm1.wav");
         public FormMenu()
         {
             InitializeComponent();
@@ -36,6 +37,7 @@ namespace NormanConquest
             FormMain formMain = new FormMain();
             formMain.gameManager.player.CharacterIndex = 0;
             this.Tag = formMain;
+            bgmplayer.Dispose();
             this.Close();
         }
 
@@ -44,7 +46,13 @@ namespace NormanConquest
             FormMain formMain = new FormMain();
             formMain.gameManager.player.CharacterIndex = 1;
             this.Tag = formMain;
+            bgmplayer.Dispose();
             this.Close();
+        }
+
+        private void FormMenu_Load(object sender, EventArgs e)
+        {
+            bgmplayer.Play(loop: true);
         }
     }
 }

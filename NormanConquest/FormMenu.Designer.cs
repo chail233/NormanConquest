@@ -115,6 +115,7 @@
             Name = "FormMenu";
             Text = "NormanConquest";
             WindowState = FormWindowState.Maximized;
+            Load += FormMenu_Load;
             ResumeLayout(false);
             PerformLayout();
         }
