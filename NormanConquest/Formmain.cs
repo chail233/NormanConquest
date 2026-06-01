@@ -252,9 +252,9 @@ namespace NormanConquest
                     ForeColor = Color.WhiteSmoke,
                     Font = new Font("微软雅黑", 10),
                     AutoSize = false,
-                    Size = new Size(width - 8, height / 4),
+                    Size = new Size(width - 8, height / 2),
                     TextAlign = ContentAlignment.TopLeft,
-                    Location = new Point(4, height * 3 / 4 - 25),
+                    Location = new Point(4, height * 3 / 5 - 25),
                     Enabled = false
                 };
                 panel.Controls.Add(descLabel);

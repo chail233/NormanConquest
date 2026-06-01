@@ -335,7 +335,8 @@ namespace NormanConquest
                 currentAttack.DamageDealt = false;
             }
             if (haveBuilding(currentAttack.Attacker, "马厩") &&
-                (currentAttack.AttackUnit.UnitType == UnitType.LightCavalry || currentAttack.AttackUnit.UnitType == UnitType.HeavyCavalry))
+                (currentAttack.AttackUnit.UnitType == UnitType.LightCavalry || currentAttack.AttackUnit.UnitType == UnitType.HeavyCavalry) && 
+                currentAttack.DamageDealt)
             {
                 UI.Logout("由于攻击单位是骑兵且攻击方拥有马厩，攻击方不丢牌");
                 Discard(currentAttack.Defender, currentAttack.DefenderUnitIndex);
