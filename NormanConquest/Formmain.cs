@@ -42,10 +42,11 @@ namespace NormanConquest
         }
         public void Logout(string message)
         {
-            textBoxLog.AppendText($"{message}\r\n");
+            if (this.IsDisposed || textBoxLog == null) return;
+            textBoxLog?.AppendText($"{message}\r\n");
             // 自动滚动到最后一行
-            textBoxLog.SelectionStart = textBoxLog.TextLength;
-            textBoxLog.ScrollToCaret();
+            textBoxLog?.SelectionStart = textBoxLog.TextLength;
+            textBoxLog?.ScrollToCaret();
         }
         public override void Refresh()
         {

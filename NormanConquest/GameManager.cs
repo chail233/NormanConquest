@@ -34,8 +34,6 @@ namespace NormanConquest
         public void StartGame()
         {
             log("游戏开始！");
-            player = new Player("玩家", initialHP);
-            opponent = new Player("敌人", initialHP);
             if (player.CharacterIndex == 1)
             {
                 log("玩家选择了英格兰国王，HP+2。");
@@ -118,6 +116,7 @@ namespace NormanConquest
             {
                 int ActIdx = AI.TakeAction(this);
                 if (processing) return;
+                if (currentAttack?.finish==false) return;
                 if (ActIdx == -1)
                 {
                     AI.waiter.SetResult(true);
@@ -168,7 +167,7 @@ namespace NormanConquest
             if (player.PendingEffects.Count > 0)
             {
                 log($"{player.Name}有以下待处理效果：");
-                foreach (var effect in player.PendingEffects)
+                foreach (var effect in player.PendingEffects.ToList())
                 {
                     log($"- {effect}");
                     Effect(player, effect);
@@ -180,35 +179,29 @@ namespace NormanConquest
             UI.Refresh();
         }
         //抽牌
-        public void DrawCard(Player player)
+        public void DrawCard(Player _player)
         {
             processing = true;
-            if (player.Deck.Count == 0)
+            if (_player.Deck.Count == 0)
             {
                 //牌堆空了，扣血洗牌
-                TakeDamage(player, 1);
-                ResetDeck(player);
-                Card drawnCard = player.DrawCard();
-                if(player.Name == "玩家")
+                TakeDamage(_player, 1);
+                ResetDeck(_player);
+                Card drawnCard = _player.DrawCard();
+                if(_player.Name == "玩家")
                 {
-                    log($"{player.Name}抽到了 {drawnCard.Name}。");
+                    log($"{_player.Name}抽到了 {drawnCard.Name}。");
                 }
-                else log($"{player.Name}抽了一张牌。");
+                else log($"{_player.Name}抽了一张牌。");
             }
             else
             {
-                Card drawnCard = player.DrawCard();
-                log($"{player.Name}抽到了 {drawnCard.Name}。");
-                //if (player.Hand.Count >= player.HandLimit)
-                //{
-                //    Card discardedCard = player.DiscardTopCard();
-                //    log($"{player.Name}的手牌已满，抽牌时丢弃了 {discardedCard.Name}。");
-                //}
-                //else
-                //{
-                //    Card drawnCard = player.DrawCard();
-                //    log($"{player.Name}抽到了 {drawnCard.Name}。");
-                //}
+                Card drawnCard = _player.DrawCard();
+                if (_player.Name == "玩家")
+                {
+                    log($"{_player.Name}抽到了 {drawnCard.Name}。");
+                }
+                else log($"{_player.Name}抽了一张牌。");
             }
             UI.Refresh();
             processing = false;
@@ -228,8 +221,8 @@ namespace NormanConquest
             player.DiscardFromHand(idx);
             if(haveBuilding(player, "市场") && !marketeffectused)
             {
-                DrawCard(player);
                 log($"{player.Name}的市场！");
+                DrawCard(player);
                 marketeffectused = true;
             }
         }
@@ -396,8 +389,19 @@ namespace NormanConquest
                 Discard(currentAttack.Attacker, currentAttack.AttackerUnitIndex);
                 Discard(currentAttack.Defender, currentAttack.DefenderUnitIndex);
             }
+            int demage = 1;
+            if (haveBuilding(currentAttack.Attacker, "兵营"))
+            {
+                log("由于攻击方拥有兵营，攻击造成的伤害增加1点！");
+                demage += 1;
+            }
+            if (currentAttack.Attacker.CharacterIndex == 0)
+            {
+                log("由于攻击方是诺曼底公爵，攻击造成的伤害增加1点！");
+                demage += 1;
+            }
             UI.Logout("攻击成功，造成了伤害！");
-            TakeDamage(currentAttack.Defender, 1);
+            TakeDamage(currentAttack.Defender, demage);
             processing = false;
         }
         private void AIDefense(Attack attack)
